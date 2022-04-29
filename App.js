@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react'
-import { Image, StyleSheet, TouchableOpacity, Text, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, Text, View, Platform } from 'react-native';
 import logo from './assets/logo.png'
 import * as ImagePicker from 'expo-image-picker'
+import * as Sharing from 'expo-sharing'
 
 export default function App() {
 
@@ -25,6 +26,14 @@ let openImagePickerAsync = async () => {
   setSelectedImage({ localUri: pickerResult.uri })
 }
 
+let openShareDialogAsync = async () => {
+  if (Platform.OS === 'web') {
+    alert('Oh No! Sharing is not available on your device')
+    return
+  }
+  await Sharing.shareAsync(selectedImage.localUri)
+}
+
 if (selectedImage !== null) {
   return (
     <View style = {styles.container}>
@@ -32,6 +41,9 @@ if (selectedImage !== null) {
       source = {{ uri:selectedImage.localUri }}
       style = {styles.thumbnail}
     />
+    <TouchableOpacity onPress={openShareDialogAsync} style = {styles.button}>
+      <Text style={styles.buttonText}> Share this photo </Text>  
+    </TouchableOpacity>
     </View>
   )
 }
